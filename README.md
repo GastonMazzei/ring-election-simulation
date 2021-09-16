@@ -4,7 +4,7 @@ UID's were sampled using the 4th version of UUID <b>[1]</b> in order to measure 
 
 <b>The following figure shows the results</b>, were in accordance with theory, i.e. time complexity is O(n) and communication complexity is O(n²), with "n" the number of nodes in the ring.
 
-<img src="https://github.com/GastonMazzei/ring-election-simulation/blob/main/results.png" width=1000>
+<img src="https://github.com/GastonMazzei/ring-election-simulation/blob/main/LCR-results.png" width=1000>
 
 <b>Biblio</b>
 
