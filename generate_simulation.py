@@ -1,5 +1,7 @@
 import multiprocessing
 
+import numpy as np
+
 import sys
 
 from uuid import uuid4
@@ -9,7 +11,7 @@ algorithm = 'LCR'
 class Processor():
     def __init__(self):
         self.leader = False
-        self.u = int(str(uuid4().int)[:16])
+        self.u = [int(str(uuid4().int)[:16]), np.random.rand()][1]
         self.state = []
         # clockwise inward message
         self.cim = [None]
@@ -25,12 +27,14 @@ def load_messages(Pc, Pn1, Pn2):
     # Pc: Processor_current
     # Pn1: Processor_neighbor1
     # Pn2: Processor_neighbor2
-    Pc.cim = Pn1.com
-    Pc.aim = Pn2.aom
+    Pc.cim = Pn1.com.copy()
+    Pc.aim = Pn2.aom.copy()
 
 
 def transition(P):
     if algorithm=='LCR':
+        P.com[0] =None
+        P.aom[0] = None
         if P.cim[0]!=None:
             if P.u == P.cim[0]:
                 P.leader = True
@@ -50,6 +54,7 @@ def populate_states_and_channels(p):
     else:
         pass
 
+
 def check_leader(ring):        
     s = sum([p.leader for p in ring.ring])
     if s==1:
@@ -68,12 +73,18 @@ def report_messages(ring):
         pass
 
 def update_complexity(ring):
+    DEBUG = [True, False][1]
+    if DEBUG:
+        print('messages:')
     ring.rounds += 1
     for p in ring.ring:
         if p.com[0]!=None:
+            if DEBUG: print(f'pid {p.u} sent {p.com}')
             ring.communications += 1
         if p.aom[0]!=None:
             ring.communications += 1
+            if DEBUG: print(f'pid {p.u} sent {p.com}')
+    if DEBUG: print('\n\n')
 
 class ProcessorRing():
     def __init__(self, N, verbose=True):
@@ -83,7 +94,8 @@ class ProcessorRing():
         self.verbose = verbose
         for p in self.ring:
             populate_states_and_channels(p)
-            update_complexity(self)
+            self.rounds += 1
+        self.communications += N
         if self.verbose:
             report_messages(self.ring)
     def transition_function(self):
@@ -117,11 +129,16 @@ def main(N, VERBOSITY=False):
 if __name__ == "__main__":
 
     # Define parameters
-    VERBOSITY=False
-
-    for N in range(5,200):
-        for _ in range(100):
-            try:
-                main(N)
-            except:
-                pass
+    TEST = [True, False][1]
+    if TEST:
+        VERBOSITY=True
+        N =5
+        main(N)
+    else:
+        VERBOSITY=False
+        for _ in range(5):
+            for N in range(5,5000,100):
+                try:
+                    main(N)
+                except:
+                    pass
