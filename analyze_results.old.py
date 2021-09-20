@@ -1,4 +1,4 @@
-from math import log2
+
 import sys
 
 import numpy as np
@@ -34,37 +34,28 @@ assert(len(L)==len(N_r)==len(N_c))
 
 
 # Apply the log_2 function to data
+L = [log2(x) for x in L]
+N_r = [log2(x) for x in N_r]
+N_c = [log2(x) for x in N_c]
+
+
+# Fit the slope of the polinomial
+sorted_L = sorted(L)
+p_r = np.polyfit(L, N_r, 1)
+p_c = np.polyfit(L, N_c, 1)
 
 
 
 # Plot
+plt.scatter(L,N_r, c='r', label='# rounds')
+plt.plot(sorted_L, np.polyval(p_r, sorted_L), c='r', label=r'$y(x)=x^\alpha$, '\
+                                                        r'$\alpha$='+f'{round(p_r[0],2)}')
+plt.plot(sorted_L, np.polyval(p_c, sorted_L), c='b', label=r'$y(x)=x^\beta$, '\
+                                                        r'$\beta$='+f'{round(p_c[0],2)}')
 plt.scatter(L,N_c, c='b', label='# communications')
-
-
-def model(x, a,b,c):
-    return a+b*x*np.log2(x*c)
-
-
-from scipy.optimize import curve_fit
-
-L = np.asarray(L)
-N_c = np.asarray(N_c)
-thr = min(L) + 0.75*(max(L)-min(L))
-mask = np.where(L>thr,True,False)
-popt, pcov = curve_fit(model, 
-                        L[mask],
-                        N_c[mask],
-                        maxfev=20000)
-
-plt.plot(sorted(L), [model(L_, *popt)  for L_ in sorted(L)], c='r',label=r'$f(x)=xlog_2(x)$')
-
-plt.plot(sorted(L), np.polyval(np.polyfit(L, N_c, 2),
-    sorted(L)), c='g', label=r'$f(x)=x^2$')
 plt.legend()
-plt.xlabel(r'$Ring Size')
-plt.plot(sorted(L), np.polyval(np.polyfit(L, N_c, 1),
-    sorted(L)), c='k', label=r'$f(x)=x$')
-plt.ylabel(r'$# Communications')
+plt.xlabel(r'$log_2$(Ring Size)')
+plt.ylabel(r'$log_2$(variable)')
 plt.grid()
 plt.title('LCR Algorithm (numerical simulation)')
 plt.show()

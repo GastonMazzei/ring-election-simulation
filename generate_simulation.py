@@ -136,8 +136,8 @@ if __name__ == "__main__":
         main(N)
     else:
         VERBOSITY=False
-        for _ in range(5):
-            for N in range(5,5000,100):
+        for _ in range(100):
+            for N in range(500,10000,500):
                 try:
                     main(N)
                 except:

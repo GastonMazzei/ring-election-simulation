@@ -1,4 +1,0 @@
-#!/bin/sh
-
-python3 generate_simulation.py > results.txt
-python3 analyze2.py

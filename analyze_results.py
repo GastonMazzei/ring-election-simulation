@@ -1,10 +1,11 @@
-
+from math import log2
 import sys
 
 import numpy as np
 
 from math import log2
 from matplotlib import pyplot as plt
+from scipy.optimize import curve_fit
 
 with open('results.txt','r') as f:
     data = f.readlines()
@@ -33,30 +34,60 @@ for i in range(len(data)//4):
 assert(len(L)==len(N_r)==len(N_c))
 
 
-# Apply the log_2 function to data
-L = [log2(x) for x in L]
-N_r = [log2(x) for x in N_r]
-N_c = [log2(x) for x in N_c]
+# Compute  mean for each ring size
+THR = 3
+pairs = list(zip(L, N_c))
+uniques = list(set(L))
+various = {u:[] for u in uniques}
+for p in pairs:
+    various[p[0]].append(p[1])
+s = sorted(various.keys())
+s = [s_ for s_ in s if len(various[s_])>=THR]
+v=[]
+for s_ in s:
+    v_ = various[s_]
+    v += [sum(v_)/len(v_)]
 
-
-# Fit the slope of the polinomial
-sorted_L = sorted(L)
-p_r = np.polyfit(L, N_r, 1)
-p_c = np.polyfit(L, N_c, 1)
-
-
+def model(x, a,b,c,d):
+    return a+b*x*np.log2(c*x+1)
 
 # Plot
-plt.scatter(L,N_r, c='r', label='# rounds')
-plt.plot(sorted_L, np.polyval(p_r, sorted_L), c='r', label=r'$y(x)=x^\alpha$, '\
-                                                        r'$\alpha$='+f'{round(p_r[0],2)}')
-plt.plot(sorted_L, np.polyval(p_c, sorted_L), c='b', label=r'$y(x)=x^\beta$, '\
-                                                        r'$\beta$='+f'{round(p_c[0],2)}')
 plt.scatter(L,N_c, c='b', label='# communications')
-plt.legend()
-plt.xlabel(r'$log_2$(Ring Size)')
-plt.ylabel(r'$log_2$(variable)')
+
+
+if False:
+    N_c = np.asarray(N_c)
+    L = np.asarray(L)
+    thr = min(L) + 0.99*(max(L)-min(L))
+    mask = np.where(L>thr,True,False)
+    popt, pcov = curve_fit(model, 
+                        L[mask],
+                        N_c[mask],
+                        maxfev=20000, bounds=(0,10000000))
+else:
+    popt, pcov = curve_fit(model, 
+                        s,
+                        v,
+                        maxfev=20000, bounds=(0,10000000))
+
+plt.plot(sorted(L), [model(L_, *popt)  for L_ in sorted(L)], lw=4, c='r',label=r'$f(x)=a+bxlog_2(cx+1)$ fit of the mean'+f'\na={round(popt[0],2)}, b={round(popt[1],2)}, c={round(popt[2],2)}')
+
+# --QUADRATIC FIT--
+pquad = np.polyfit(s,v,2)
+plt.plot(sorted(L), np.polyval(pquad,
+    sorted(L)), c='g', lw=2,ls='dashdot', label=r'$f(x)=ax^2+bx$ fit  of the  mean'+f'\na={round(pquad[0],2)}, b={round(pquad[1],2)}')
+
+# --QUADRATIC FIT--
+if False:
+    plt.plot(sorted(L), np.polyval(np.polyfit(s, v, 1),
+        sorted(L)), c='y', lw=2,ls='--', label=r'$f(x)=x$')
+
+
+plt.xlabel(r'$Ring Size')
+plt.plot(s,v,c='k',ls=':',lw=4,label='mean')
+plt.ylabel(r'$# Communications')
 plt.grid()
-plt.title('LCR Algorithm (numerical simulation)')
+plt.title('LCR Algorithm - numerical simulation\n(N is too small to distinguish quadratic and log(n) behaviour)')
+plt.legend()
 plt.show()
 
