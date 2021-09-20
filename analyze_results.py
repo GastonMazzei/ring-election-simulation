@@ -49,7 +49,8 @@ for s_ in s:
     v += [sum(v_)/len(v_)]
 
 def model(x, a,b,c,d):
-    return a+b*x*np.log2(c*x+1)
+    #return a+b*x*np.log2(c*x+1)
+    return a*x*np.log2(x)
 
 # Plot
 plt.scatter(L,N_c, c='b', label='# communications')
@@ -64,30 +65,38 @@ if False:
                         L[mask],
                         N_c[mask],
                         maxfev=20000, bounds=(0,10000000))
+elif True:
+    popt, pcov = curve_fit(model, 
+                        L,
+                        N_c,
+                        maxfev=20000, bounds=(0,10000000))
 else:
     popt, pcov = curve_fit(model, 
                         s,
                         v,
                         maxfev=20000, bounds=(0,10000000))
 
-plt.plot(sorted(L), [model(L_, *popt)  for L_ in sorted(L)], lw=4, c='r',label=r'$f(x)=a+bxlog_2(cx+1)$ fit of the mean'+f'\na={round(popt[0],2)}, b={round(popt[1],2)}, c={round(popt[2],2)}')
+plt.plot(sorted(L), [model(L_, *popt)  for L_ in sorted(L)], lw=4, c='r',label=r'$f(x)=axlog_2(x)$ fit of the mean'+f'\na={round(popt[0],2)}')
 
 # --QUADRATIC FIT--
-pquad = np.polyfit(s,v,2)
-plt.plot(sorted(L), np.polyval(pquad,
+if False:
+    pquad = np.polyfit(s,v,2)
+    plt.plot(sorted(L), np.polyval(pquad,
     sorted(L)), c='g', lw=2,ls='dashdot', label=r'$f(x)=ax^2+bx$ fit  of the  mean'+f'\na={round(pquad[0],2)}, b={round(pquad[1],2)}')
 
-# --QUADRATIC FIT--
+# --LINEAR FIT--
 if False:
     plt.plot(sorted(L), np.polyval(np.polyfit(s, v, 1),
         sorted(L)), c='y', lw=2,ls='--', label=r'$f(x)=x$')
 
-
+plt.xlim(0,8500)
 plt.xlabel(r'$Ring Size')
-plt.plot(s,v,c='k',ls=':',lw=4,label='mean')
+
+if False:
+    plt.plot(s,v,c='k',ls=':',lw=4,label='mean')
 plt.ylabel(r'$# Communications')
 plt.grid()
-plt.title('LCR Algorithm - numerical simulation\n(N is too small to distinguish quadratic and log(n) behaviour)')
+plt.title('LCR Algorithm - numerical simulation')
 plt.legend()
 plt.show()
 
