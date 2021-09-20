@@ -4,7 +4,7 @@ Real-valued UID's were sampled uniformly in [0,1] in order to measure both the t
 
 <b>The following figure shows the results</b>. According to theory, the time complexity is O(n), worst-case communication complexity is O(n²), and average communication complexity is O(nlog(n)). In the figure it can be qualitatively noted that the theoretical average case complexity has been reproduced.
 
-<img src="https://github.com/GastonMazzei/ring-election-simulation/blob/main/LCR-results.png" width=1000>
+<img src="https://github.com/GastonMazzei/ring-election-simulation/blob/main/LCR-results.png" width=600>
 
 <b>Biblio</b>
 
