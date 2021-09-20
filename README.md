@@ -2,7 +2,7 @@
 
 UID's were sampled using the 4th version of UUID <b>[1]</b> in order to measure both the time and communication complexity of the Chang and Robrts (LCR) algorithm <b>[2]</b>. 
 
-<b>The following figure shows the results</b>. According to theory, the time complexity is O(n), worst-case communication complexity is O(n²), and average communication complexity is O(nlog(n)). Nevertheless, fitting the last two functions  over the communication cost per ring size so-far collapses to a linear parametrization. In order to "go deeper", i.e. try rings an order of magnitude bigger, the simulation was migrated to Google Colab and the results are yet to be tested..
+<b>The following figure shows the results</b>. According to theory, the time complexity is O(n), worst-case communication complexity is O(n²), and average communication complexity is O(nlog(n)). In the figure it can be qualitatively noted that the theoretical average case complexity has been reproduced.
 
 <img src="https://github.com/GastonMazzei/ring-election-simulation/blob/main/LCR-results.png" width=1000>
 
