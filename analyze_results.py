@@ -94,9 +94,10 @@ plt.xlabel('Ring Size')
 
 if False:
     plt.plot(s,v,c='k',ls=':',lw=4,label='mean')
-plt.ylabel(r'$# Communications')
+plt.ylabel(r'$# Communications (logscale)')
 plt.grid()
 plt.title('LCR Algorithm - numerical simulation')
 plt.legend()
+plt.yscale('log')
 plt.show()
 
