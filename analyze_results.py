@@ -76,7 +76,7 @@ else:
                         v,
                         maxfev=20000, bounds=(0,10000000))
 
-plt.plot(sorted(L), [model(L_, *popt)  for L_ in sorted(L)], lw=4, c='r',label=r'$f(x)=axlog_2(x)$ fit of the mean'+f'\na={round(popt[0],2)}')
+plt.plot(sorted(L), [model(L_, *popt)  for L_ in sorted(L)], lw=4, c='r',label=r'$f(N)=aNlog_2(N)$'+f'\na={round(popt[0],2)}')
 
 # --QUADRATIC FIT--
 if False:
@@ -89,8 +89,8 @@ if False:
     plt.plot(sorted(L), np.polyval(np.polyfit(s, v, 1),
         sorted(L)), c='y', lw=2,ls='--', label=r'$f(x)=x$')
 
-plt.xlim(0,8500)
-plt.xlabel(r'$Ring Size')
+#plt.xlim(0,8500)
+plt.xlabel('Ring Size')
 
 if False:
     plt.plot(s,v,c='k',ls=':',lw=4,label='mean')
